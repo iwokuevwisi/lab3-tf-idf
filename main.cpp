@@ -1,6 +1,6 @@
 /***
 TODO
-1. Заменить While в main, processDocuments
+1. Заменить While в processDocuments
 2. Чтение файлов из нескольких слов
 ***/
 
