@@ -94,6 +94,7 @@ int main() {
         return false;
     });
 
+    // Версия с обычным бесконечным циклом
     // std::string query;
     // while (std::getline(std::cin, query)) {
     //     std::vector<std::string> query_tokens = tokenizeText(query);
