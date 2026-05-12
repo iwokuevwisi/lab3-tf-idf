@@ -1,8 +1,7 @@
 /***
 TODO
-1. Заменить while
+1. Заменить While в main, processDocuments
 2. Чтение файлов из нескольких слов
-
 ***/
 
 #include <iostream>
@@ -69,8 +68,13 @@ int main() {
 
     processDocuments(fin);
 
+    // Бесконечный цикл
     std::string query;
-    while (std::getline(std::cin, query)) {
+    std::ranges::find_if(std::views::repeat(0), [&](int) {
+        if (!std::getline(std::cin, query) || cleanText(query) == "exit") {
+            return true;
+        }
+
         std::vector<std::string> query_tokens = tokenizeText(query);
         if (query_tokens.size() == 2 && query_tokens[0] == "WORD") {
             queryWord(cleanText(query_tokens[1]));
@@ -86,7 +90,28 @@ int main() {
         } else {
             std::cout << "This query not found\n";
         }
-    }
+
+        return false;
+    });
+
+    // std::string query;
+    // while (std::getline(std::cin, query)) {
+    //     std::vector<std::string> query_tokens = tokenizeText(query);
+    //     if (query_tokens.size() == 2 && query_tokens[0] == "WORD") {
+    //         queryWord(cleanText(query_tokens[1]));
+    //     } else if (query_tokens.size() == 3 && query_tokens[0] == "WORD_IN_DOC") {
+    //         queryWordInDoc(cleanText(query_tokens[1]), query_tokens[2]);
+    //     } else if (query_tokens.size() == 2 && query_tokens[0] == "DOC") {
+    //         queryDoc(query_tokens[1]);
+    //     } else if (query_tokens.size() > 1 && query_tokens[0] == "QUERY") {
+    //         std::ranges::for_each(query_tokens | std::views::drop(1), [&](auto& word) {
+    //             word = cleanText(word);
+    //         });
+    //         queryWordsCollection({query_tokens.begin() + 1, query_tokens.end()});
+    //     } else {
+    //         std::cout << "This query not found\n";
+    //     }
+    // }
 }
 
 void queryWord(const std::string& word) {
