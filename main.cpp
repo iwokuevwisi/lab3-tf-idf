@@ -221,12 +221,14 @@ void queryWordsCollection(const std::vector<std::string>& words) {
 void processDocuments(std::ifstream& fin) {
     std::string doc_name;
 
-    // Открываем каждый документ и считаем TF для слов в каждом документе
-    while (std::getline(fin, doc_name)) {
+    std::ranges::find_if(std::views::repeat(0), [&](int) {
+        // Открываем каждый документ и считаем TF для слов в каждом документе
+        if (!std::getline(fin, doc_name)) {
+            return true;
+        }
         std::ifstream fin_doc(doc_name);
         if (!fin_doc.is_open()) {
-            std::cout << "Error loading " << doc_name << ".txt file\n";
-            continue;
+            std::cout << std::format("Error loading {} file\n", doc_name);
         }
         DOCS_COUNT++;
 
@@ -259,7 +261,49 @@ void processDocuments(std::ifstream& fin) {
             word.docs.insert(doc_name);
         }
         */
-    }
+        
+        return false;
+    });
+
+    // // Открываем каждый документ и считаем TF для слов в каждом документе
+    // while (std::getline(fin, doc_name)) {
+    //     std::ifstream fin_doc(doc_name);
+    //     if (!fin_doc.is_open()) {
+    //         std::cout << "Error loading " << doc_name << ".txt file\n";
+    //         continue;
+    //     }
+    //     DOCS_COUNT++;
+
+    //     // Считываем весь текст из документа, чистим текст, разбиваем на отдельные слова
+    //     std::string original_text{std::istreambuf_iterator<char> {fin_doc},
+    //                               std::istreambuf_iterator<char> {}};
+    //     std::string clean_text = cleanText(original_text);
+    //     std::vector<std::string> tokens = tokenizeText(clean_text);
+
+    //     // Считаем уникальные слова и кол-во вхождений в документе
+    //     std::unordered_map<std::string, WordStats> unique_words;
+    //     std::for_each(tokens.begin(), tokens.end(), [&](const auto& token) {
+    //         unique_words[token].count++;
+    //     });
+
+    //     Doc doc = {(int) tokens.size(), unique_words};
+    //     DOCS[doc_name] = doc;
+
+    //     // Добавляем наименование документа, в котором данное слово фигурировало
+    //     std::ranges::for_each(unique_words, [&](const auto& item) {
+    //         const auto& [token, word_stats] = item;
+    //         // Если слова не было в словаре, то создастся такой элемент.
+    //         // Иначе, получим ссылку на него
+    //         auto& word = DICTIONARY[token];
+    //         word.docs.insert(doc_name);
+    //     });
+    //     /* Альтернативный вариант того же самого:
+    //     for (const auto& [token, word_stats] : unique_words) {
+    //         auto& word = DICTIONARY[token];
+    //         word.docs.insert(doc_name);
+    //     }
+    //     */
+    // }
 
     // Расчет IDF для каждого слова
     std::ranges::for_each(DICTIONARY, [](auto& item){
